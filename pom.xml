@@ -73,6 +73,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>gibson</finalName>
 	</build>
 
 </project>
