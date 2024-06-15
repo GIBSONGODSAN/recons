@@ -17,22 +17,19 @@ public class FxRateGenerator {
         List<String> allPairs = currencyPairGenerator.getAllCurrencyPairs();
 
         for (String pair : allPairs) {
-            int integerPart = RANDOM.nextInt(100);
+            int integerPart = 20 + RANDOM.nextInt(80);
             double fixedPart = RANDOM.nextDouble(100) * 100;
             double[] bidAskPrices = bidAskGenerator.generateRandomBidAskPrice(integerPart, fixedPart);
-            double bidPrice = bidAskPrices[0];
-            double askPrice = bidAskPrices[1];
             String type = currencyPairGenerator.getType(pair);
 
             Map<String, Object> pairInfo = new LinkedHashMap<>();
             pairInfo.put("pair", pair);
             pairInfo.put("type", type);
-            pairInfo.put("bid", bidPrice);
-            pairInfo.put("ask", askPrice);
+            pairInfo.put("bid", bidAskPrices[0]);
+            pairInfo.put("ask", bidAskPrices[1]);
 
             currencyPairsList.add(pairInfo);
         }
         return currencyPairsList;
     }
-
 }
