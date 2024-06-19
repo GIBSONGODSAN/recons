@@ -3,6 +3,11 @@ package com.example.demo.controller;
 import com.example.demo.fxrates.FxRateGenerator;
 import com.example.demo.handler.ResponseHandler;
 import com.example.demo.fxrates.SpreadPipCalculator;
+import com.example.demo.model.UserCredentials;
+import com.example.demo.util.JWTUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +24,9 @@ import javax.annotation.PostConstruct;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api")
@@ -29,6 +37,9 @@ public class BidAskController {
 
     @Autowired
     private SpreadPipCalculator spreadPipCalculator;
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     // Shared Flux that all clients will subscribe to
     private Flux<ResponseEntity<Object>> sharedFlux;
@@ -57,4 +68,31 @@ public class BidAskController {
                     return Flux.empty();
                 });
     }
+
+    @PostMapping("/userlogin")
+    public ResponseEntity<Object> userLogin(@RequestBody UserCredentials userCredentials) {
+        String accountNumber = userCredentials.getAccountNumber();
+        String password = userCredentials.getPassword();
+
+        if (accountNumber == null || password == null) {
+            return ResponseEntity.badRequest().body("Account number and password are required");
+        }
+
+        UserCredentials user = UserCredentials.getUserByAccountNumber(accountNumber);
+
+        if (user == null || !user.getPassword().equals(password)) {
+            System.out.println("Invalid user credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user credentials");
+        } else {
+            String token = jwtUtil.generateToken(user);
+            List<Map<String, Object>> tokenAndAccountNumber = new ArrayList<>();
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("token", token);
+            entry.put("accountNumber", accountNumber);
+            tokenAndAccountNumber.add(entry);
+            System.out.println("User logged in successfully");
+            return ResponseHandler.generateResponse("User logged in successfully", HttpStatus.OK, tokenAndAccountNumber);
+        }
+    }
+    
 }
