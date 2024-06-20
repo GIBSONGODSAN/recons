@@ -23,10 +23,10 @@ public class FxRateGenerator {
             String type = currencyPairGenerator.getType(pair);
 
             Map<String, Object> pairInfo = new LinkedHashMap<>();
-            pairInfo.put("pair", pair);
-            pairInfo.put("type", type);
-            pairInfo.put("bid", bidAskPrices[0]);
-            pairInfo.put("ask", bidAskPrices[1]);
+            pairInfo.put("ccyPair", pair);
+            pairInfo.put("pairType", type);
+            pairInfo.put("bid", bidAskPrices[1]);
+            pairInfo.put("ask", bidAskPrices[0]);
 
             currencyPairsList.add(pairInfo);
         }

@@ -1,7 +1,6 @@
 package com.example.demo.handler;
 
 import java.util.HashMap;
-import java.util.List; 
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -12,8 +11,7 @@ public class ResponseHandler {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("message", message);
 		map.put("status", status.value());
-		map.put("data", responseObj);
-		map.put("count", ((List) responseObj).size());	
+		map.put("data", responseObj);	
 		map.put("timestamp", System.currentTimeMillis());
 		map.put("date", new java.util.Date());
 

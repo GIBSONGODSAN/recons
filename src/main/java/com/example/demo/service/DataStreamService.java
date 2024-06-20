@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -28,6 +29,8 @@ public class DataStreamService {
     CustomWebSocketHandler webSocketHandler;
     private final ObjectMapper objectMapper;
 
+    private List<Map<String, Object>> currencyData = new CopyOnWriteArrayList<>();
+
     public DataStreamService(@Autowired FxRateGenerator fxRateGenerator,
                              @Autowired SpreadPipCalculator spreadPipCalculator,
                              @Autowired CustomWebSocketHandler webSocketHandler,
@@ -41,8 +44,9 @@ public class DataStreamService {
 
     @Scheduled(fixedRate = 5)
     public void streamData() {
-        Object data = spreadPipCalculator.changeSpread(currencyPairs);
+        List<Map<String, Object>> data = spreadPipCalculator.changeSpread(currencyPairs);
         try {
+            currencyData = data;
             String message = objectMapper.writeValueAsString(data);
             broadcastMessage(message);
         } catch (IOException e) {
@@ -58,5 +62,14 @@ public class DataStreamService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Map<String, Object> getCurrencyData(String pairType, String ccyPair) {
+        for (Map<String, Object> currency : currencyData) {
+            if (currency.get("pairType").equals(pairType) && currency.get("ccyPair").equals(ccyPair)) {
+                return currency;
+            }
+        }
+        return null; 
     }
 }
