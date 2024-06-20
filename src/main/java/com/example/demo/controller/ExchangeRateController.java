@@ -16,7 +16,7 @@ import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/fx-rates")
+@RequestMapping("/fxrates")
 public class ExchangeRateController {
 
     private static final Random RANDOM = new Random();
