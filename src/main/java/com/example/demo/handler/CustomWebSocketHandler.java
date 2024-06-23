@@ -27,7 +27,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // Handle incoming messages if needed
+        
     }
 
     public Set<WebSocketSession> getSessions() {

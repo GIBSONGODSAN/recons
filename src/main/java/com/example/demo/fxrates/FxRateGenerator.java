@@ -18,7 +18,7 @@ public class FxRateGenerator {
 
         for (String pair : allPairs) {
             int integerPart = 20 + RANDOM.nextInt(80);
-            double fixedPart = RANDOM.nextDouble(100) * 100;
+            double fixedPart = RANDOM.nextDouble(100);
             double[] bidAskPrices = bidAskGenerator.generateRandomBidAskPrice(integerPart, fixedPart);
             String type = currencyPairGenerator.getType(pair);
 

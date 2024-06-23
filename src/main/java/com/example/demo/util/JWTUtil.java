@@ -18,7 +18,7 @@ public class JWTUtil {
     private String SECRET="narselmary";
 
     private static final int JWT_TOKEN_VALIDITY = 5 * 60 * 60; 
-    private static final String CLAIM_KEY_USER_ID = "dob";  
+    private static final String CLAIM_KEY_USER_ID = "accessNumber";  
 
     public JWTUtil(Environment env) {
         // Validate key existence using Spring's Environment (optional)

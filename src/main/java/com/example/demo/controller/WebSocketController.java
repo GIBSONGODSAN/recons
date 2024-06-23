@@ -6,6 +6,7 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import com.example.demo.handler.CustomWebSocketHandler;
+import com.example.demo.handler.CustomWSBankSpot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,10 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class WebSocketController implements WebSocketConfigurer {
 
     @Autowired
-    private CustomWebSocketHandler customWebSocketHandler;
+    CustomWebSocketHandler customWebSocketHandler;
+
+    @Autowired
+    CustomWSBankSpot customWSBankSpot;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(customWebSocketHandler, "/ws");
+        registry.addHandler(customWSBankSpot, "/wsbankspot");
     }
+
 }

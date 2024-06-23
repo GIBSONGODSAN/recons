@@ -21,7 +21,7 @@ public class SpreadPipCalculator {
             double roundedAsk = changePips(askPrice);
             pair.put("ask", roundedAsk);
 
-            double spread = roundedBid - roundedAsk;
+            double spread = roundedAsk - roundedBid;
             pair.put("spread", spread);
 
             double midRateValue = (roundedBid + roundedAsk) / 2;
@@ -33,7 +33,10 @@ public class SpreadPipCalculator {
     private double changePips(double value) {
         long intValue = (long) value;
         double fractionalPart = value - intValue;
-        double randomDecimals = new Random().nextDouble() / 1000; 
+        double randomDecimals = new Random().nextDouble() / 10000; 
+        if (new Random().nextBoolean()) {
+            randomDecimals = -randomDecimals;
+        }
         return intValue + fractionalPart + randomDecimals;
     }
 
