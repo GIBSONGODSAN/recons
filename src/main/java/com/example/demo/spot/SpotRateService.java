@@ -14,10 +14,10 @@ public class SpotRateService {
         Map<String, SpotValues> result = new HashMap<>();
 
         for (SpotRate.BankRate bankRate : spotRate.getBankRates()) {
-            double buySpotValue = calculator.calculateBuySpotValue(bankRate.getRate());
-            double sellSpotValue = calculator.calculateSellSpotValue(bankRate.getRate());
-            double buySpotLotValue = calculator.calculateBuySpotLotValue(bankRate.getRate(), lots);
-            double sellSpotLotValue = calculator.calculateSellSpotLotValue(bankRate.getRate(), lots);
+            double buySpotValue = calculator.calculateBuySpotValue(bankRate.getBidrate());
+            double sellSpotValue = calculator.calculateSellSpotValue(bankRate.getAskrate());
+            double buySpotLotValue = calculator.calculateBuySpotLotValue(bankRate.getBidrate(), lots);
+            double sellSpotLotValue = calculator.calculateSellSpotLotValue(bankRate.getAskrate(), lots);
             int lotsValue = lots;
             result.put(bankRate.getBankName(), new SpotValues(buySpotValue, sellSpotValue, buySpotLotValue, sellSpotLotValue, lotsValue));
         }

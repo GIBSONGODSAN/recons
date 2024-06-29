@@ -2,8 +2,10 @@ package com.example.demo.spot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class SpotRate {
 
     private final List<BankRate> bankRates;
@@ -14,16 +16,11 @@ public class SpotRate {
     }
 
     private void initializeBankRates() {
-        Random random = new Random();
-        bankRates.add(new BankRate("HDFC", getRandomRate(random)));
-        bankRates.add(new BankRate("ICICI", getRandomRate(random)));
-        bankRates.add(new BankRate("SBI", getRandomRate(random)));
-        bankRates.add(new BankRate("AxisBank", getRandomRate(random)));
-        bankRates.add(new BankRate("IDFC", getRandomRate(random)));
-    }
-
-    private double getRandomRate(Random random) {
-        return (random.nextDouble() * 0.01) - 0.005; // Generates a random number between -0.005 and 0.005
+        bankRates.add(new BankRate("HDFC", 0.003, 0.003));
+        bankRates.add(new BankRate("ICICI", 0.003, 0.003));
+        bankRates.add(new BankRate("SBI", 0.003, 0.003));
+        bankRates.add(new BankRate("AxisBank", 0.003, 0.003));
+        bankRates.add(new BankRate("IDFC", 0.003, 0.003));
     }
 
     public List<BankRate> getBankRates() {
@@ -32,19 +29,25 @@ public class SpotRate {
 
     public static class BankRate {
         private final String bankName;
-        private final double rate;
+        private final double bidrate;
+        private final double askrate;
 
-        public BankRate(String bankName, double rate) {
+        public BankRate(String bankName, double bidrate, double askrate) {
             this.bankName = bankName;
-            this.rate = rate;
+            this.bidrate = bidrate;
+            this.askrate = askrate;
         }
 
         public String getBankName() {
             return bankName;
         }
 
-        public double getRate() {
-            return rate;
+        public double getBidrate() {
+            return bidrate;
+        }
+
+        public double getAskrate() {
+            return askrate;
         }
     }
 }

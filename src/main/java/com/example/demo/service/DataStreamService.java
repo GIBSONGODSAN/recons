@@ -21,13 +21,16 @@ import com.example.demo.fxrates.FxRateGenerator;
 import com.example.demo.fxrates.SpreadPipCalculator;
 import com.example.demo.model.SpotBanks;
 import com.example.demo.model.UserSession;
+import com.example.demo.model.UserSessionForward;
 import com.example.demo.spot.SpotRateAnalysis;
 import com.example.demo.spot.SpotRateService;
 import com.example.demo.spot.SpotRateService.SpotValues;
 import com.example.demo.websockerhandler.BSLotsHandler;
 import com.example.demo.websockerhandler.CCYPairBidAskHandler;
 import com.example.demo.websockerhandler.CCYPairHandler;
+import com.example.demo.websockerhandler.SpotForwardHandler;
 import com.example.demo.handler.ResponseHandler;
+import com.example.demo.spot.ForwardRateCalculator;
 
 @Service
 public class DataStreamService {
@@ -40,6 +43,8 @@ public class DataStreamService {
     SpotRateService spotRateService;
     @Autowired
     SpreadPipCalculator spreadPipCalculator;
+    @Autowired
+    ForwardRateCalculator forwardRateCalculator;
     private final List<Map<String, Object>> currencyPairs;
     
     @Autowired
@@ -55,6 +60,12 @@ public class DataStreamService {
     @Autowired
     public void setCCYPairHandler(CCYPairHandler ccyPairHandler) {
         this.ccyPairHandler = ccyPairHandler;
+    }
+
+    private SpotForwardHandler spotForwardHandler;
+    @Autowired
+    public void setSpotForwardHandler(SpotForwardHandler spotForwardHandler) {
+        this.spotForwardHandler = spotForwardHandler;
     }
 
     private final ObjectMapper objectMapper;
@@ -93,6 +104,40 @@ public class DataStreamService {
             }
         }
         sendFilteredMessages();
+        sendForwardRates();
+    }
+
+    private void sendForwardRates(){
+
+        for (UserSessionForward userSession : spotForwardHandler.getUserSessions()) {
+            String pairType = userSession.getPairType();
+            String ccyPair = userSession.getCcyPair();
+            int noOfDays = userSession.getNoOfDays();
+            int amount = userSession.getAmount();
+            WebSocketSession session = userSession.getSession();
+
+            if (pairType != null && ccyPair != null) {
+                Map<String, Object> currencyData = getCurrencyData(pairType, ccyPair);
+                String[] currencies = ccyPair.split("/");
+                if (currencyData != null) {
+                    Double bid = (double) currencyData.get("bid");
+                    Double ask = (double) currencyData.get("ask");
+                    Map<String, Double> interestRates = (Map<String, Double>) currencyData.get("interestRates");
+                    Double bidInterestRate = interestRates.get(currencies[0]);
+                    Double quoteInterestRate = interestRates.get(currencies[1]);
+                   
+                    Map<String, Map<String, Object>> forwardRates = forwardRateCalculator.calculateForwardRates(bid, ask, amount, noOfDays, bidInterestRate, quoteInterestRate);
+                    try {
+                        String forwardRatesMessage = objectMapper.writeValueAsString(forwardRates);
+                        session.sendMessage(new TextMessage(forwardRatesMessage));
+                    } catch (IOException e) {
+                        System.out.println("Failed to send forward rates to session: " + session.getId() + " " + e.getMessage());
+                    }
+                }
+            } else {
+                log.warn("Session " + session.getId() + " has no filter criteria set.");
+            }
+        }
     }
 
     private void sendFilteredMessages() {
