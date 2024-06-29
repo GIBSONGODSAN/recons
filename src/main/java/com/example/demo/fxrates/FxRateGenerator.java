@@ -12,6 +12,8 @@ public class FxRateGenerator {
     private final CurrencyPairGenerator currencyPairGenerator = new CurrencyPairGenerator();
     private final BidAskGenerator bidAskGenerator = new BidAskGenerator();
 
+    InterestRate interestRate = new InterestRate();
+
     public List<Map<String, Object>> generateCurrencyPairList() {
         List<Map<String, Object>> currencyPairsList = new ArrayList<>();
         List<String> allPairs = currencyPairGenerator.getAllCurrencyPairs();
@@ -27,7 +29,7 @@ public class FxRateGenerator {
             pairInfo.put("pairType", type);
             pairInfo.put("bid", bidAskPrices[1]);
             pairInfo.put("ask", bidAskPrices[0]);
-
+            pairInfo.put("interestRates", interestRate.getInterestRates(pair));
             currencyPairsList.add(pairInfo);
         }
         return currencyPairsList;

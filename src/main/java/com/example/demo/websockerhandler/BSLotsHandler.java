@@ -1,4 +1,4 @@
-package com.example.demo.handler;
+package com.example.demo.websockerhandler;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -17,7 +17,7 @@ import com.example.demo.model.SpotBanks;
 import com.example.demo.service.DataStreamService;
 
 @Component
-public class CustomWSBankSpot extends TextWebSocketHandler {
+public class BSLotsHandler extends TextWebSocketHandler {
 
     @Autowired
     private ObjectMapper objectMapper;

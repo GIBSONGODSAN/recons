@@ -1,4 +1,4 @@
-package com.example.demo.bankSpotRates;
+package com.example.demo.spot;
 
 import java.util.ArrayList;
 import java.util.List;

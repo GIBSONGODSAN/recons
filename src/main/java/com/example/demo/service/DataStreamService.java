@@ -1,6 +1,7 @@
 package com.example.demo.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,18 +17,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import com.example.demo.bankSpotRates.SpotRateAnalysis;
-import com.example.demo.bankSpotRates.SpotRateService;
 import com.example.demo.fxrates.FxRateGenerator;
 import com.example.demo.fxrates.SpreadPipCalculator;
-import com.example.demo.handler.CustomWSBankSpot;
-import com.example.demo.handler.CustomWebSocketHandler;
 import com.example.demo.model.SpotBanks;
+import com.example.demo.model.UserSession;
+import com.example.demo.spot.SpotRateAnalysis;
+import com.example.demo.spot.SpotRateService;
+import com.example.demo.spot.SpotRateService.SpotValues;
+import com.example.demo.websockerhandler.BSLotsHandler;
+import com.example.demo.websockerhandler.CCYPairBidAskHandler;
+import com.example.demo.websockerhandler.CCYPairHandler;
 import com.example.demo.handler.ResponseHandler;
-import com.example.demo.bankSpotRates.SpotRateService.SpotValues;
 
 @Service
 public class DataStreamService {
+
+    private static final Logger log = LoggerFactory.getLogger(DataStreamService.class);
 
     @Autowired
     FxRateGenerator fxRateGenerator;
@@ -36,13 +41,20 @@ public class DataStreamService {
     @Autowired
     SpreadPipCalculator spreadPipCalculator;
     private final List<Map<String, Object>> currencyPairs;
-    @Autowired
-    CustomWebSocketHandler webSocketHandler;
     
-    private CustomWSBankSpot customWSBankSpot;
+    @Autowired
+    CCYPairBidAskHandler webSocketHandler;
+    
+    private BSLotsHandler customWSBankSpot;
     @Autowired  
-    public void setCustomWSBankSpot(CustomWSBankSpot customWSBankSpot) {
+    public void setCustomWSBankSpot(BSLotsHandler customWSBankSpot) {
         this.customWSBankSpot = customWSBankSpot;
+    }
+
+    private CCYPairHandler ccyPairHandler;
+    @Autowired
+    public void setCCYPairHandler(CCYPairHandler ccyPairHandler) {
+        this.ccyPairHandler = ccyPairHandler;
     }
 
     private final ObjectMapper objectMapper;
@@ -51,7 +63,7 @@ public class DataStreamService {
 
     public DataStreamService(@Autowired FxRateGenerator fxRateGenerator,
                              @Autowired SpreadPipCalculator spreadPipCalculator,
-                             @Autowired CustomWebSocketHandler webSocketHandler,
+                             @Autowired CCYPairBidAskHandler webSocketHandler,
                              ObjectMapper objectMapper) {
         this.fxRateGenerator = fxRateGenerator;
         this.spreadPipCalculator = spreadPipCalculator;
@@ -80,7 +92,37 @@ public class DataStreamService {
                 e.printStackTrace();
             }
         }
+        sendFilteredMessages();
     }
+
+    private void sendFilteredMessages() {
+        try {
+            List<UserSession> userSessions = ccyPairHandler.getUserSessions();
+            for (UserSession userSession : userSessions) {
+                String pairType = userSession.getPairType();
+                String ccyPair = userSession.getCcyPair();
+                WebSocketSession session = userSession.getSession();
+    
+                if (pairType != null && ccyPair != null) {
+                    Map<String, Object> filteredData = getCurrencyData(pairType, ccyPair);
+                    if (filteredData != null) {
+                        try {
+                            String filteredMessage = objectMapper.writeValueAsString(filteredData);
+                            session.sendMessage(new TextMessage(filteredMessage));
+                        } catch (IOException e) {
+                            // Handle specific session send failure
+                            log.error("Failed to send filtered message to session: " + session.getId(), e);
+                        }
+                    }
+                } else {
+                    log.warn("Session " + session.getId() + " has no filter criteria set.");
+                }
+            }
+        } catch (Exception e) {
+            // Handle general processing failure
+            log.error("Error processing filtered messages", e);
+        }
+    }    
 
     public Map<String, Object> getCurrencyData(String pairType, String ccyPair) {
         for (Map<String, Object> currency : currencyData) {

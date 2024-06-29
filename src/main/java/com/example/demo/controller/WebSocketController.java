@@ -5,8 +5,9 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.example.demo.handler.CustomWebSocketHandler;
-import com.example.demo.handler.CustomWSBankSpot;
+import com.example.demo.websockerhandler.BSLotsHandler;
+import com.example.demo.websockerhandler.CCYPairBidAskHandler;
+import com.example.demo.websockerhandler.CCYPairHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,15 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class WebSocketController implements WebSocketConfigurer {
 
     @Autowired
-    CustomWebSocketHandler customWebSocketHandler;
+    CCYPairBidAskHandler CCYPairBidAskGenerator;
 
     @Autowired
-    CustomWSBankSpot customWSBankSpot;
+    BSLotsHandler BSLotsGenerator;
+
+    @Autowired
+    CCYPairHandler CCYPairGenerator;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(customWebSocketHandler, "/ws");
-        registry.addHandler(customWSBankSpot, "/wsbankspot");
+        registry.addHandler(CCYPairBidAskGenerator, "/get/fxrates");
+        registry.addHandler(CCYPairGenerator, "/get/ccypair");
+        registry.addHandler(BSLotsGenerator, "/wsbankspot");
     }
 
 }

@@ -2,7 +2,11 @@ package com.example.demo.fxrates;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CurrencyPairGenerator {
 
     // Major Currency Pairs
@@ -86,6 +90,19 @@ public class CurrencyPairGenerator {
             return "minor";
         } else {
             return "exotic";
+        }
+    }
+
+    public List<String> getPairsByType(String type) {
+        switch (type.toLowerCase()) {
+            case "major":
+                return majorCurrencyPairs;
+            case "minor":
+                return minorCurrencyPairs;
+            case "exotic":
+                return exoticCurrencyPairs;
+            default:
+                return new ArrayList<>();
         }
     }
 }

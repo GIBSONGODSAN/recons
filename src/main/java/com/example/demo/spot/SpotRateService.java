@@ -1,4 +1,4 @@
-package com.example.demo.bankSpotRates;
+package com.example.demo.spot;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.example.demo.handler;
+package com.example.demo.websockerhandler;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class CustomWebSocketHandler extends TextWebSocketHandler {
+public class CCYPairBidAskHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
 
