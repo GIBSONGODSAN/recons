@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.fxrates.CurrencyPairGenerator;
 import com.example.demo.handler.ResponseHandler;
 import com.example.demo.model.CurrencyPairTypeRequest;
+import com.example.demo.model.UserCredentials;
+import com.example.demo.util.JWTUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -25,10 +27,24 @@ public class CCYPairController {
     @Autowired
     private CurrencyPairGenerator currencyPairGenerator;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
     private CurrencyPairTypeRequest currencyPairTypeRequest;
 
      @PostMapping("/bytype")
     public ResponseEntity<Object> getCurrencyPairsByType(@RequestBody CurrencyPairTypeRequest currencyPairTypeRequest) {
+        String token = currencyPairTypeRequest.getAccessToken();
+        int accessNumber = currencyPairTypeRequest.getAccessNumber();
+
+        if (token == null || accessNumber == 0) {
+            return ResponseHandler.generateResponse("Access Token or Access Number cannot be empty", HttpStatus.BAD_REQUEST, null);
+        }
+        UserCredentials user = UserCredentials.getUserByAccessNumber(accessNumber);
+
+        if (!jwtUtil.validateToken(token, user)) {
+            return ResponseHandler.generateResponse("Invalid Token", HttpStatus.UNAUTHORIZED, null);
+        }
         List<String> pairs = currencyPairGenerator.getPairsByType(currencyPairTypeRequest.getType());
         Map<String, Object> response = new HashMap<>();
         response.put("pairs", pairs);

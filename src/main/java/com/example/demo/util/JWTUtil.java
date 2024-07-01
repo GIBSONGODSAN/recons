@@ -34,7 +34,7 @@ public class JWTUtil {
             Date expiresAt = new Date(issuedAt.getTime() + JWT_TOKEN_VALIDITY * 1000);
 
             return JWT.create()
-                    .withSubject(user.getAccountNumber())
+                    .withSubject(user.getUsername())
                     .withClaim(CLAIM_KEY_USER_ID, user.getAccessNumber()) 
                     .withExpiresAt(expiresAt)
                     .sign(algorithm);
@@ -61,7 +61,7 @@ public class JWTUtil {
             JWT.require(Algorithm.HMAC256(SECRET))
                     .build()
                     .verify(token);
-            return (getUsernameFromToken(token).equals(userDetails.getAccountNumber()));
+            return (getUsernameFromToken(token).equals(userDetails.getUsername()));
         } catch (JWTVerificationException e) {
             return false;
         }

@@ -5,20 +5,25 @@ import java.util.List;
 
 public class UserCredentials {
 
-    private String accountNumber;
+    private String username;
     private String password;
+    private int accountNumber;
     private int accessNumber;
 
     // Constructor
-    public UserCredentials(String accountNumber, String password, int accessNumber) {
-        this.accountNumber = accountNumber;
+    public UserCredentials(String username, String password,int accountNumber, int accessNumber) {
+        this.username = username;
         this.password = password;
+        this.accountNumber = accountNumber;
         this.accessNumber = accessNumber;
     }
 
-    // Getters and Setters
-    public String getAccountNumber() {
+    public int getAccountNumber() {
         return accountNumber;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
@@ -29,8 +34,8 @@ public class UserCredentials {
         return accessNumber;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -41,22 +46,35 @@ public class UserCredentials {
         this.accessNumber = accessNumber;
     }
 
+    public void setAccountNumber(int accountNumber) {
+        this.accountNumber = accountNumber;
+    }   
+
     // Static method to initialize userList
     public static List<UserCredentials> initializeUserList() {
         List<UserCredentials> userList = new ArrayList<>();
-        userList.add(new UserCredentials("12345", "password1", 1));
-        userList.add(new UserCredentials("54321", "password2", 2));
-        userList.add(new UserCredentials("98765", "password3", 3));
-        userList.add(new UserCredentials("56789", "password4", 4));
-        userList.add(new UserCredentials("24680", "password5", 5));
+        userList.add(new UserCredentials("user1", "password1", 123456, 1));
+        userList.add(new UserCredentials("user2", "password2", 234567, 2));
+        userList.add(new UserCredentials("user3", "password3", 345678, 3));
+        userList.add(new UserCredentials("user4", "password4", 456789, 4));
         return userList;
     }
 
     // Static method to get user by account number
-    public static UserCredentials getUserByAccountNumber(String accountNumber) {
+    public static UserCredentials getUserByName(String username) {
         List<UserCredentials> userList = initializeUserList();
         for (UserCredentials user : userList) {
-            if (user.getAccountNumber().equals(accountNumber)) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public static UserCredentials getUserByAccessNumber(int accessNumber) {
+        List<UserCredentials> userList = initializeUserList();
+        for (UserCredentials user : userList) {
+            if (user.getAccessNumber() == accessNumber) {
                 return user;
             }
         }
