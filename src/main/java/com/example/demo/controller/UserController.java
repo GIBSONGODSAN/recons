@@ -44,7 +44,7 @@ public class UserController {
             List<Map<String, Object>> response = new ArrayList<>();
             Map<String, Object> entry = new HashMap<>();
             entry.put("token", token);
-            entry.put("accessNumber", user.getAccessNumber());
+            entry.put("username", user.getUsername());
             response.add(entry);
             System.out.println("User logged in successfully");
             return ResponseHandler.generateResponse("User logged in successfully", HttpStatus.OK, response);

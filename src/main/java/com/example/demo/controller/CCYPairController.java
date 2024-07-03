@@ -37,12 +37,12 @@ public class CCYPairController {
     public ResponseEntity<Object> getCurrencyPairsByType(@RequestHeader("Authorization") String authorizationHeader ,@RequestBody CurrencyPairTypeRequest currencyPairTypeRequest) {
 
         String token = authorizationHeader.substring(7);
-        int accessNumber = currencyPairTypeRequest.getAccessNumber();
+        String username = currencyPairTypeRequest.getUsername();
 
-        if (token == null || accessNumber == 0) {
-            return ResponseHandler.generateResponse("Access Token or Access Number cannot be empty", HttpStatus.BAD_REQUEST, null);
+        if (token == null || username == null) {
+            return ResponseHandler.generateResponse("Access Token or User Name cannot be empty", HttpStatus.BAD_REQUEST, null);
         }
-        UserCredentials user = UserCredentials.getUserByAccessNumber(accessNumber);
+        UserCredentials user = UserCredentials.getUserByName(username);
 
         if (!jwtUtil.validateToken(token, user)) {
             return ResponseHandler.generateResponse("Invalid Token", HttpStatus.UNAUTHORIZED, null);
