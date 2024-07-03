@@ -3,12 +3,12 @@ package com.example.demo.model;
 public class CurrencyPairTypeRequest {
 
     private String type;
-    private String accessToken;
+    // private String accessToken;
     private int accessNumber;
 
-    public CurrencyPairTypeRequest(String type, String accessToken, int accessNumber) {
+    public CurrencyPairTypeRequest(String type, int accessNumber) {
         this.type = type;
-        this.accessToken = accessToken;
+        // this.accessToken = accessToken;
         this.accessNumber = accessNumber;
     }
 
@@ -20,13 +20,13 @@ public class CurrencyPairTypeRequest {
         this.type = type;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
+    // public String getAccessToken() {
+    //     return accessToken;
+    // }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
+    // public void setAccessToken(String accessToken) {
+    //     this.accessToken = accessToken;
+    // }
 
     public int getAccessNumber() {
         return accessNumber;
