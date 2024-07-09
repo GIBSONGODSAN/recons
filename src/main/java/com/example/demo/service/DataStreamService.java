@@ -22,6 +22,7 @@ import com.example.demo.fxrates.SpreadPipCalculator;
 import com.example.demo.model.SpotBanks;
 import com.example.demo.model.UserSession;
 import com.example.demo.model.UserSessionForward;
+import com.example.demo.model.UserSessionLots;
 import com.example.demo.spot.SpotRateAnalysis;
 import com.example.demo.spot.SpotRateService;
 import com.example.demo.spot.SpotRateService.SpotValues;
@@ -105,6 +106,7 @@ public class DataStreamService {
         }
         sendFilteredMessages();
         sendForwardRates();
+        sendSpotLots();
     }
 
     private void sendForwardRates(){
@@ -178,21 +180,44 @@ public class DataStreamService {
         return null; 
     }
 
-    public Object processSpotPriceRequest(SpotBanks spotBanks) {
+    private void sendSpotLots() {
+        List<UserSessionLots> userSessionsLots = customWSBankSpot.getUserSessions();
+        for (UserSessionLots userSession : userSessionsLots) {
+            String pairType = userSession.getPairType();
+            String ccyPair = userSession.getCcyPair();
+            int lots = userSession.getLots();
+            WebSocketSession session = userSession.getSession();
+
+            if (pairType != null && ccyPair != null) {
+                SpotBanks spotBanks = new SpotBanks(pairType, ccyPair, lots);
+                Object spotValues = processSpotPriceRequest(spotBanks);
+                try {
+                    String response = objectMapper.writeValueAsString(spotValues);
+                    session.sendMessage(new TextMessage(response));
+                } catch (IOException e) {
+                    System.out.println("Failed to send spot values to session: " + session.getId() + " " + e.getMessage());
+                }
+            } else {
+                log.warn("Session " + session.getId() + " has no filter criteria set.");
+            }
+        }
+    }
+
+    private Object processSpotPriceRequest(SpotBanks spotBanks) {
         String pairType = spotBanks.getPairType();
         String ccyPair = spotBanks.getCcyPair();
         int lots = spotBanks.getLots();
         Map<String, Object> currencyData = getCurrencyData(pairType, ccyPair);
+        Object spotValues = null;
 
         if (currencyData != null) {
             double bid = (double) currencyData.get("bid");
             double ask = (double) currencyData.get("ask");
-            Object spotValues = calculateSpotValues(bid, ask, lots);
-            broadcastSpotValues(spotValues); // Broadcast the spot values
-            return ResponseHandler.generateResponse("Spot values calculated", HttpStatus.OK, spotValues);
+            spotValues = calculateSpotValues(bid, ask, lots);
         } else {
-            return ResponseEntity.status(404).body("Currency data not found");
+            log.warn("No currency data found for pairType: " + pairType + " and ccyPair: " + ccyPair);
         }
+        return spotValues;
     }
 
     public Object calculateSpotValues(double bid, double ask, int lots) {
