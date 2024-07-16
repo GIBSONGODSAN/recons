@@ -1,0 +1,92 @@
+Here's a detailed breakdown of user stories with acceptance criteria for each feature of your FX trading application:
+
+### 1. User Registration and Login
+
+#### User Story 1: User Registration
+**As a** new user,  
+**I want** to register an account,  
+**So that** I can access the trading platform.
+
+**Acceptance Criteria:**
+1. The user can access the registration page from the home page.
+2. The registration page includes fields for username, email, password, and confirmation password.
+3. The user receives a confirmation email upon successful registration.
+4. The user cannot register with an already used email or username.
+5. Password strength must be validated (e.g., minimum 8 characters, including one uppercase letter, one number, and one special character).
+
+#### User Story 2: User Login
+**As a** registered user,  
+**I want** to log in to my account,  
+**So that** I can access my personalized dashboard and trading features.
+
+**Acceptance Criteria:**
+1. The user can access the login page from the home page.
+2. The login page includes fields for username/email and password.
+3. The user is redirected to the dashboard upon successful login.
+4. The system displays an error message if the login credentials are incorrect.
+5. The user can reset their password via an email link if forgotten.
+
+### 2. Application Dashboard
+
+#### User Story 3: Dashboard Access
+**As a** logged-in user,  
+**I want** to access my dashboard,  
+**So that** I can see an overview of my trading activities and account details.
+
+**Acceptance Criteria:**
+1. The dashboard displays the user's current account balance.
+2. The dashboard provides a summary of recent transactions.
+3. The dashboard shows real-time FX spot and forward rates.
+4. The dashboard includes navigation links to the trading platform, transaction history, and user profile.
+
+### 3. Trading Platform
+
+#### User Story 4: View FX Rates
+**As a** user,  
+**I want** to view real-time FX spot and forward rates,  
+**So that** I can make informed trading decisions.
+
+**Acceptance Criteria:**
+1. The trading platform displays real-time spot and forward rates for multiple currency pairs.
+2. The rates are updated every second.
+3. The user can filter rates based on specific currency pairs.
+
+#### User Story 5: Execute Trades
+**As a** user,  
+**I want** to execute FX spot and forward trades,  
+**So that** I can trade currencies based on current rates.
+
+**Acceptance Criteria:**
+1. The user can select a currency pair to trade.
+2. The user can specify the amount and direction (buy/sell) for the trade.
+3. The system calculates and displays the transaction details (e.g., rate, amount, fees) before confirmation.
+4. The user receives a confirmation message upon successful trade execution.
+5. The user's account balance is updated accordingly after the trade.
+
+### 4. Transaction History Page
+
+#### User Story 6: View Transaction History
+**As a** user,  
+**I want** to view my transaction history,  
+**So that** I can track my past trades and account activity.
+
+**Acceptance Criteria:**
+1. The transaction history page displays a list of past trades, including date, currency pair, amount, rate, and status.
+2. The user can filter the transaction history by date range, currency pair, and trade type (spot/forward).
+3. The user can search for specific transactions using keywords.
+
+### 5. User Profile
+
+#### User Story 7: View and Edit Profile
+**As a** user,  
+**I want** to view and edit my profile information,  
+**So that** I can keep my account details up-to-date.
+
+**Acceptance Criteria:**
+1. The user profile page displays the user's personal information (e.g., username, email, phone number).
+2. The user can edit and save changes to their profile information.
+3. The user can change their password from the profile page.
+4. The system validates new information before saving changes (e.g., unique email, password strength).
+5. The user receives a confirmation message upon successful profile update.
+
+These user stories and acceptance criteria should help in defining the scope and functionalities for your FX trading application.
