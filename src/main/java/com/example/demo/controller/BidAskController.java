@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
@@ -36,7 +35,7 @@ public class BidAskController {
     private SpreadPipCalculator spreadPipCalculator;
 
     @Autowired
-    private APIUserRepository userRepository;
+    APIUserRepository userRepository;
 
     @Autowired
     private APIUtil apiUtil;
@@ -60,13 +59,13 @@ public class BidAskController {
     }
 
     @GetMapping(value = "/currencypairs", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ResponseEntity<Object>> getBidAsk(@RequestHeader String API_KEY, @RequestParam Integer Id ) {
+    public Flux<ResponseEntity<Object>> getBidAsk(@RequestHeader String API_KEY) {
 
-        ApiUser user = userRepository.findById(Id).orElse(null);
+        ApiUser user = userRepository.findByToken(API_KEY);
         if (user == null) {
             return Flux.error(new RuntimeException("Invalid API key"));
         }
-        if(API_KEY.equals(user.getToken()) && Id.equals(user.getId())) {
+        if(API_KEY.equals(user.getToken())) {
            apiUtil.validateToken(API_KEY, user);
         } else {
             return Flux.error(new RuntimeException("Invalid API key"));

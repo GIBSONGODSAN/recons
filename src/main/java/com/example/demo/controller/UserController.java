@@ -24,28 +24,33 @@ public class UserController {
     @Autowired
     private APIUserRepository userRepository;
 
-    @PostMapping("/signip")
+    @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody ApiUser user) {
-        // Validate user input
-        if (user == null) {
-            return ResponseHandler.generateResponse("User object is required", HttpStatus.BAD_REQUEST, null);
+        try {
+            // Validate user input
+            if (user == null) {
+                return ResponseHandler.generateResponse("User object is required", HttpStatus.BAD_REQUEST, null);
+            }
+            if (user.getEmail() == null || user.getEmail().isEmpty()) {
+                return ResponseHandler.generateResponse("Email is required", HttpStatus.BAD_REQUEST, null);
+            }
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                return ResponseHandler.generateResponse("Password is required", HttpStatus.BAD_REQUEST, null);
+            }
+            if (user.getPlanType() == null || user.getPlanType().isEmpty()) {
+                return ResponseHandler.generateResponse("Plan type is required", HttpStatus.BAD_REQUEST, null);
+            }
+            // Generate JWT token
+            String token = apiUtil.generateToken(user);
+            user.setToken(token);
+            // Save user to database
+            userRepository.save(user);
+            // Return user object with token
+            return ResponseHandler.generateResponse("User signed up successfully", HttpStatus.OK, user);
+        } catch (Exception e) {
+            // Handle any exceptions that occur during signup process
+            return ResponseHandler.generateResponse("Error occurred during signup", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            return ResponseHandler.generateResponse("Email is required", HttpStatus.BAD_REQUEST, null);
-        }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            return ResponseHandler.generateResponse("Password is required", HttpStatus.BAD_REQUEST, null);
-        }
-        if (user.getPlanType() == null || user.getPlanType().isEmpty()) {
-            return ResponseHandler.generateResponse("Plan type is required", HttpStatus.BAD_REQUEST, null);
-        }
-        // Generate JWT token
-        String token = apiUtil.generateToken(user);
-        user.setToken(token);
-        // Save user to database
-        userRepository.save(user);
-        // Return user object with token
-        return ResponseHandler.generateResponse("User signed up successfully", HttpStatus.OK, user);
     }
        
 }
