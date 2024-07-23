@@ -72,7 +72,10 @@ public class BidAskController {
         }
           
         return Flux.interval(Duration.ofSeconds(2))
+            .takeWhile(tick -> user.getNoOfRequests() > 0)
             .map(tick -> {
+                user.setNoOfRequests(user.getNoOfRequests() - 1);
+                user = userRepository.save(user);
                 List<Map<String, Object>> currencyPairs = fxRateGenerator.generateCurrencyPairList();
                 return filterDataBasedOnPlan(user.getPlanType(), currencyPairs);
             })

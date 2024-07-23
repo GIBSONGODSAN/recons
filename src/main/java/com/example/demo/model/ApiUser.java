@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 @Entity
 @Table(name = "api_user")
@@ -39,7 +40,15 @@ public class ApiUser {
     private String PlanType;
     @Column(nullable = false)
     private String token;
+    @Column(nullable = false)
+    private Integer noOfRequests;
     
+    public Integer getNoOfRequests() {
+        return noOfRequests;
+    }
+    public void setNoOfRequests(Integer noOfRequests) {
+        this.noOfRequests = noOfRequests;
+    }
     public String getToken() {
         return token;
     }
@@ -113,7 +122,7 @@ public class ApiUser {
         PlanType = planType;
     }
     public ApiUser(Integer id, String firstName, String lastName, String email, String password, String address,
-            String city, Integer zipCode, Integer phoneNumber, String companyName, String planType, String token) {
+            String city, Integer zipCode, Integer phoneNumber, String companyName, String planType, String token, Integer noOfRequests) {
         this.id = id;
         this.FirstName = firstName;
         this.LastName = lastName;
@@ -126,6 +135,7 @@ public class ApiUser {
         this.CompanyName = companyName;
         this.PlanType = planType;
         this.token = token;
+        this.noOfRequests = noOfRequests;
     }    
 
 }
