@@ -38,8 +38,18 @@ public class UserController {
             if (user.getPlanType() == null || user.getPlanType().isEmpty()) {
                 return ResponseHandler.generateResponse("Plan type is required", HttpStatus.BAD_REQUEST, null);
             }
+            if (user.getPlanType().equals("FREE_api_key") || user.getPlanType().equals("STANDARD_api_key") || user.getPlanType().equals("PREMIUM_api_key")) {
+                return ResponseHandler.generateResponse("Invalid Plan Type", HttpStatus.BAD_REQUEST, null);
+            }
 
             // Save user to database
+            if (user.getPlanType().equals("FREE_api_key")) {
+                user.setNoOfRequests(100);
+            } else if (user.getPlanType().equals("STANDARD_api_key")) {
+                user.setNoOfRequests(500);
+            } else if (user.getPlanType().equals("PREMIUM_api_key")) {
+                user.setNoOfRequests(1000);
+            }
             userRepository.save(user);
             // Return user object with token
             return ResponseHandler.generateResponse("User signed up successfully", HttpStatus.OK, user);
